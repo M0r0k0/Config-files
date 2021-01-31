@@ -1,2 +1,2 @@
 # Config-files
-Config files of Arch installation 
+Config files of Arch/OpenBSD installation 
