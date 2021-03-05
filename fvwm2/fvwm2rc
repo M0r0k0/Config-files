@@ -25,6 +25,8 @@ Style * ResizeOpaque
 #Indexed window names to make sure each window name is unique
 Style * IndexedWindowName
 
+IgnoreModifiers L25
+
 # make sure these fonts exist on your system:
 #WindowFont -adobe-times-bold-r-*-*-14-*-*-*-*-*-*-*
 #IconFont -adobe-helvetica-bold-r-*-*-10-*-*-*-*-*-*-*
@@ -32,7 +34,9 @@ Style "*" Font "xft:blackjack:size=15"
 
 Style * HilightFore #3e3e3e
 Style * HilightBack #ffffff
-MenuStyle #4d4d4d #bebebe #e7e7e7 -adobe-times-bold-r-*-*-12-*-*-*-*-*-*-* fvwm
+Style * FPGrabFocus
+Style * ResizeHintOverride
+#MenuStyle #4d4d4d #bebebe #e7e7e7 -adobe-times-bold-r-*-*-12-*-*-*-*-*-*-* fvwm
 
 
 #Get rid of applications icons #ffffff, bg #000000, sh #000000, hi #000000
@@ -62,7 +66,7 @@ DeskTopSize 2x2
 
 #Desktop edge thickness and resistance for switching easily with mouse
 EdgeScroll 100 100
-EdgeResistance 300 
+EdgeResistance -1 
 Style * EdgeMoveDelay 0
 Style * EdgeMoveResistance 0
 EdgeThickness 2
@@ -90,7 +94,7 @@ Style "*" 	    NakedTransient
 Style "Fvwm*"       NoTitle, NoHandles, Sticky, WindowListSkip
 #Style "Fvwm*"       BorderWidth 2, CirculateSkipIcon, CirculateSkip
 #Style "FvwmPager"   StaysOnTop
-Styel "FvwmWinList" NoTitle
+Style "FvwmWinList" NoTitle
 Style "FvwmPager"   BorderWidth 0
 Style "FvwmBanner"  StaysOnTop
 Style "FvwmButtons" Icon toolbox.xpm, ClickToFocus
@@ -105,6 +109,7 @@ AddToDecor terms
 Style "rxvt"        UseDecor terms
 Style "rxvt"        Icon term.xpm, SloppyFocus, IconBox -70 1 -1 -140
 #Style "rxvt"        MWMBorder, MWMButtons
+Style  "bar"   NoTitle, NoHandles, BorderWidth 0, StaysOnBottom
 
 
 # Styles for various common programs:
@@ -148,21 +153,21 @@ Style "xconsole"    Icon rterm.xpm, WindowListSkip, Sticky
 
 # some simple default mouse bindings:
 #   for the root window:
-Mouse 1	R   	A       Menu RootMenu Nop
-Mouse 2	R    	A      	Menu Window-Ops Nop
-Mouse 3	R    	A      	WindowList
+#Mouse 1	R   	A       Menu RootMenu Nop
+#Mouse 2	R    	A      	Menu Window-Ops Nop
+#Mouse 3	R    	A      	WindowList
 
 #   for the title bar buttons:
-Mouse 0	1    	A      	Menu Window-Ops2 Close
-Mouse 0	2    	A     	Maximize-Func
-Mouse 0	4    	A     	Iconify
+#Mouse 0	1    	A      	Menu Window-Ops2 Close
+#Mouse 0	2    	A     	Maximize-Func
+#Mouse 0	4    	A     	Iconify
 
 #   for other parts of the window/borders/icons:
 Mouse 1	F	A	Resize-or-Raise
 Mouse 1	TS	A	Move-or-Raise
 Mouse 1	I	A	Move-or-Iconify
 Mouse 2	I	A	Iconify
-Mouse 2	FST	A	Menu Window-Ops2 Nop
+#Mouse 2	FST	A	Menu Window-Ops2 Nop
 Mouse 3	TSIF	A	RaiseLower
 
 
@@ -183,17 +188,23 @@ Key 5 W S4 MovetoDesk 0 4
 Key 6 W S4 MovetoDesk 0 5
 
 
-Key h A C GotoPage -1p 0p 
-Key j A C GotoPage 0p +1p 
-Key k A C GotoPage 0p -1p 
-Key l A C GotoPage +1p 0p 
+Key h A M GotoPage -1p 0p 
+Key j A M GotoPage 0p +1p 
+Key k A M GotoPage 0p -1p 
+Key l A M GotoPage +1p 0p 
+Key 1 A C GotoPage 0 0 
+Key 2 A C GotoPage 1 0 
+Key 3 A C GotoPage 0 1 
+Key 4 A C GotoPage 1 1 
 
-Key f W 4 UndecMax 100 100
+Key f W 4 UndecMax 
 
 
 Key Return A 4 Exec exec xterm -geometry 60x25+500+130
 Key s A 4 Exec exec tabbed -c surf -e 
-Key x A 4S Exec exec i3lock -i /home/moroko/Images/Solid_Colors/aquamarine.png
+Key x A 4S Exec exec i3lock -i /home/moroko/Images/Solid_Colors/rose.jpg
+Key c A 4 Exec exec xterm ls 
+Key p A MS Exec exec pkill fvwm
 
 Key q W 4S Delete
 Key Tab A M Next (CurrentDesk !Iconic) Focus
@@ -211,6 +222,10 @@ Key l W 4 SnapRight
 Key j W 4 SnapBottom
 Key k W 4 SnapTop
 
+Key h W S4 TileLeft 
+Key l W S4 TileRight
+Key j W S4 TileBottom
+Key k W S4 TileTop
 
 
 
@@ -220,13 +235,13 @@ Key k W 4 SnapTop
 DestroyFunc StartFunction
 AddToFunc   StartFunction
 #+ I Module FvwmTaskBar
-+ I Module FvwmPager 0 5
+#+ I Module FvwmPager 0 5
 #+ I Module FvwmButtons MyButtons
 
 DestroyFunc InitFunction
 AddToFunc   InitFunction
 + I Exec exec feh --bg-fill  /home/moroko/Images/Solid_Colors/rose.jpeg
-+ I Exec exec tint2
+#+ I Exec exec tint2
 
 DestroyFunc RestartFunction
 AddToFunc   RestartFunction
@@ -292,160 +307,196 @@ AddToFunc Decoratetitle
 # Undecorate window and maximize it
 DestroyFunc UndecMax
 AddToFunc UndecMax 
-+ I ThisWindow UnDecorate
++ I ThisWindow (Maximized) Decorate
++ I ThisWindow (!Maximized) UnDecorate
+#+ I Layer 0 6
 + I Raise
-+ I Schedule 100 Maximize 100 100
++ I Schedule 50 Maximize 100 100
 
 ## Window Snapping
 # Snap Left
 DestroyFunc SnapLeft
 AddToFunc SnapLeft
-+ I ResizeMove 42 74 3 4 
++ I ThisWindow (Maximized, !Shaded, !Iconic) Decorate
++ I Schedule 50 ResizeMove 42 74 3 4 
 + Raise
 
 DestroyFunc SnapRight
 AddToFunc SnapRight
-+ I ResizeMove 42 73 52 4 
++ I ThisWindow (Maximized, !Shaded, !Iconic) Decorate
++ I Schedule 50 ResizeMove 42 73 52 4 
 + I Raise
 
 # Snap Top
 DestroyFunc SnapTop
 AddToFunc SnapTop
-+ I ResizeMove 90 35 4 3
++ I ThisWindow (Maximized, !Shaded, !Iconic) Decorate
++ I Schedule 50 ResizeMove 90 35 4 3
 + I Raise
 
 # Snap Bottom
 DestroyFunc SnapBottom
 AddToFunc SnapBottom
-+ I ResizeMove 90 35 4 -3
++ I ThisWindow (Maximized, !Shaded, !Iconic) Decorate
++ I Schedule 50 ResizeMove 90 35 4 -3
 + I Raise
 
+DestroyFunc TileLeft
+AddToFunc TileLeft
++ I ThisWindow (!Shaded, !Iconic) UnDecorate
++ I ThisWindow (Maximized, !Shaded, !Iconic) Decorate
++ I Schedule 50 ThisWindow (!Shaded, !Iconic) Maximize 50 100
++ I Schedule 50 ThisWindow (Maximized, !Shaded, !Iconic) Move +0 +0
+
+DestroyFunc TileRight
+AddToFunc TileRight
++ I ThisWindow (!Shaded, !Iconic) UnDecorate
++ I ThisWindow (Maximized, !Shaded, !Iconic) Decorate
++ I Schedule 50 ThisWindow (!Shaded, !Iconic) Maximize 50 100
++ I Schedule 50 ThisWindow (Maximized, !Shaded, !Iconic) Move -0 +0
+
+DestroyFunc TileTop
+AddToFunc TileTop
++ I ThisWindow (!Shaded, !Iconic) UnDecorate
++ I ThisWindow (Maximized, !Shaded, !Iconic) Decorate
++ I Schedule 50 ThisWindow (!Shaded, !Iconic) Maximize 100 50
++ I Schedule 50 ThisWindow (Maximized, !Shaded, !Iconic) Move +0 +0
+
+DestroyFunc TileBottom
+AddToFunc TileBottom
++ I ThisWindow (!Shaded, !Iconic) UnDecorate
++ I ThisWindow (Maximized, !Shaded, !Iconic) Decorate
++ I Schedule 50 ThisWindow (!Shaded, !Iconic) Maximize 100 50
++ I Schedule 50 ThisWindow (Maximized, !Shaded, !Iconic) Move +0 -0
+
+
+
 ######################## Menus ###################
-AddToMenu RootMenu	"Root Menu"	Title
-+			"XTerm%mini.xterm.xpm%"		Exec exec xterm
+#AddToMenu RootMenu	"Root Menu"	Title
+#+			"XTerm%mini.xterm.xpm%"		Exec exec xterm
 #+			"Rxvt"		Exec exec rxvt
-+			""		Nop
+#+			""		Nop
 #+			"Remote Logins"	Popup Remote-Logins
 #+			""		Nop
-+                       "Utilities"     Popup Utilities
-+			""		Nop
-+			"Fvwm Modules"	          Popup Module-Popup
-+                       "Fvwm Window Ops"         Popup Window-Ops
-+                       "Fvwm Simple Config Ops"  Popup Misc-Ops
-+			""		Nop
-+                       "Refresh Screen"   Refresh
-+                       "Recapture Screen" Recapture
-+			"(Re)Start"	Popup Quit-Verify
-+			""		Nop
-+                       "Exit"  Module FvwmForm QuitVerify
+#+                       "Utilities"     Popup Utilities
+#+			""		Nop
+#+			"Fvwm Modules"	          Popup Module-Popup
+#+                       "Fvwm Window Ops"         Popup Window-Ops
+#+                       "Fvwm Simple Config Ops"  Popup Misc-Ops
+#+			""		Nop
+#+                       "Refresh Screen"   Refresh
+#+                       "Recapture Screen" Recapture
+#+			"(Re)Start"	Popup Quit-Verify
+#+			""		Nop
+#+                       "Exit"  Module FvwmForm QuitVerify
 
-AddToMenu Utilities     "Utilities" Title
-+			"Top"		Exec exec xterm -T Top -n Top -e top
-+			"Calculator"	Exec exec xcalc
-+			"Xman"		Exec exec xman
-+			"Xmag"		Exec exec xmag
-+                       "Editres"       Exec exec editres
-+			""		Nop
+#AddToMenu Utilities     "Utilities" Title
+#+			"Top"		Exec exec xterm -T Top -n Top -e top
+#+			"Calculator"	Exec exec xcalc
+#+			"Xman"		Exec exec xman
+#+			"Xmag"		Exec exec xmag
+#+                       "Editres"       Exec exec editres
+#+			""		Nop
 #+			"XEmacs"	Exec exec xemacs
 #+                       "Mail"          MailFunction xmh "-font fixed"
-+			""		Nop
-+                       "XLock%mini.xlock.xpm%"         Exec exec xlock
-+			""		Nop
-+                       "Reset X defaults" Exec xrdb -load $HOME/.Xdefaults
+#+			""		Nop
+#+                       "XLock%mini.xlock.xpm%"         Exec exec xlock
+#+			""		Nop
+#+                       "Reset X defaults" Exec xrdb -load $HOME/.Xdefaults
 
-AddToMenu Misc-Ops "Misc Config Opts" Title
-+                  "Sloppy Focus"        ChangeDefaultFocus SloppyFocus
-+                  "Click To Focus"      ChangeDefaultFocus ClickToFocus
-+                  "Focus Follows Mouse" ChangeDefaultFocus FocusFollowsMouse
-+                  "" Nop
-+                  "Colormap Follows Mouse" ColormapFocus FollowsMouse
-+                  "Colormap Follows Focus" ColormapFocus FollowsFocus
-+                  "" Nop
-+                  "Full Paging ON"         EdgeScroll 100 100
-+                  "All Paging OFF"         EdgeScroll 0 0
-+                  "Horizontal Paging Only" EdgeScroll 100 0
-+                  "Vertical Paging Only"   EdgeScroll 0 100
-+                  "Partial Paging"         EdgeScroll 50 50
-+                  "Full Paging && Edge Wrap" EdgeScroll 100000 100000
+#AddToMenu Misc-Ops "Misc Config Opts" Title
+#+                  "Sloppy Focus"        ChangeDefaultFocus SloppyFocus
+#+                  "Click To Focus"      ChangeDefaultFocus ClickToFocus
+#+                  "Focus Follows Mouse" ChangeDefaultFocus FocusFollowsMouse
+#+                  "" Nop
+#+                  "Colormap Follows Mouse" ColormapFocus FollowsMouse
+#+                  "Colormap Follows Focus" ColormapFocus FollowsFocus
+#+                  "" Nop
+#+                  "Full Paging ON"         EdgeScroll 100 100
+#+                  "All Paging OFF"         EdgeScroll 0 0
+#+                  "Horizontal Paging Only" EdgeScroll 100 0
+#+                  "Vertical Paging Only"   EdgeScroll 0 100
+#+                  "Partial Paging"         EdgeScroll 50 50
+#+                  "Full Paging && Edge Wrap" EdgeScroll 100000 100000
 
-AddToMenu Window-Ops	"Window Ops"	Title
-+			"Move%mini.move.xpm%"		Move
-+			"Resize%mini.resize.xpm%"	Resize
-+			"Raise%mini.raise.xpm%"		Raise
-+			"Lower%mini.lower.xpm%"		Lower
-+		 	"(De)Iconify%mini.iconify.xpm%"	Iconify
-+			"(Un)Stick%mini.stick2.xpm%"	Stick
-+			"(Un)Maximize%mini.maximize.xpm%"	Maximize
-+			""		Nop
-+			"Delete%mini.excl.xpm%"	Delete
-+			"Close%mini.cut.xpm%"		Close
-+			"Destroy%mini.destroy.xpm%"	Destroy
-+			""		Nop
-+			"Refresh Window%mini.refresh.xpm%" RefreshWindow
+#AddToMenu Window-Ops	"Window Ops"	Title
+#+			"Move%mini.move.xpm%"		Move
+#+			"Resize%mini.resize.xpm%"	Resize
+#+			"Raise%mini.raise.xpm%"		Raise
+#+			"Lower%mini.lower.xpm%"		Lower
+#+		 	"(De)Iconify%mini.iconify.xpm%"	Iconify
+#+			"(Un)Stick%mini.stick2.xpm%"	Stick
+#+			"(Un)Maximize%mini.maximize.xpm%"	Maximize
+#+			""		Nop
+#+			"Delete%mini.excl.xpm%"	Delete
+#+			"Close%mini.cut.xpm%"		Close
+#+			"Destroy%mini.destroy.xpm%"	Destroy
+#+			""		Nop
+#+			"Refresh Window%mini.refresh.xpm%" RefreshWindow
 
-AddToMenu Window-Ops2	"&Move%mini.move.xpm%"		Move
-+			"&Resize%mini.resize.xpm%"	Resize
-+			"R&aise%mini.raise.xpm%"	Raise
-+			"&Lower%mini.lower.xpm%"	Lower
-+			"(De)&Iconify%mini.iconify.xpm%"	Iconify
-+			"(Un)&Stick%mini.stick2.xpm%"	Stick
-+                       "(Un)Ma&ximize%mini.maximize.xpm%" Maximize
-+			""		Nop
-+			"&Delete%mini.excl.xpm%"	Delete
-+			"&Close%mini.cut.xpm%"	Close
-+			"Destroy%mini.destroy.xpm%"	Destroy
-+			""		Nop
-+			"ScrollBar" 	Module FvwmScroll 2 2
-+			"Print"         PrintFunction
+#AddToMenu Window-Ops2	"&Move%mini.move.xpm%"		Move
+#+			"&Resize%mini.resize.xpm%"	Resize
+#+			"R&aise%mini.raise.xpm%"	Raise
+#+			"&Lower%mini.lower.xpm%"	Lower
+#+			"(De)&Iconify%mini.iconify.xpm%"	Iconify
+#+			"(Un)&Stick%mini.stick2.xpm%"	Stick
+#+                       "(Un)Ma&ximize%mini.maximize.xpm%" Maximize
+#+			""		Nop
+#+			"&Delete%mini.excl.xpm%"	Delete
+#+			"&Close%mini.cut.xpm%"	Close
+#+			"Destroy%mini.destroy.xpm%"	Destroy
+#+			""		Nop
+#+			"ScrollBar" 	Module FvwmScroll 2 2
+#+			"Print"         PrintFunction
 #+                       "Print Reverse" PrintReverseFunction
 
 # be sure to fill these in with your correct machine names:
-AddToMenu Remote-Logins	"dopey"	 Exec rsh dopey rxvt -display $HOSTDISPLAY &
-+			"snoopy" Exec rsh snoopy rxvt -display $HOSTDISPLAY &
-+			"grumpy" Exec rsh grumpy rxvt -display $HOSTDISPLAY &
-+			"happy"	 Exec rsh happy rxvt -display $HOSTDISPLAY &
-+			"bailey" Exec rsh bailey rxvt -display $HOSTDISPLAY &
-+			"barnum" Exec rsh barnum rxvt -display $HOSTDISPLAY &
-+			"joker"	 Exec rsh joker rxvt -display $HOSTDISPLAY &
-+			"signal" Exec rxterm signal
+#AddToMenu Remote-Logins	"dopey"	 Exec rsh dopey rxvt -display $HOSTDISPLAY &
+#+			"snoopy" Exec rsh snoopy rxvt -display $HOSTDISPLAY &
+#+			"grumpy" Exec rsh grumpy rxvt -display $HOSTDISPLAY &
+#+			"happy"	 Exec rsh happy rxvt -display $HOSTDISPLAY &
+#+			"bailey" Exec rsh bailey rxvt -display $HOSTDISPLAY &
+#+			"barnum" Exec rsh barnum rxvt -display $HOSTDISPLAY &
+#+			"joker"	 Exec rsh joker rxvt -display $HOSTDISPLAY &
+#+			"signal" Exec rxterm signal
 
-AddToMenu Module-Popup	"FvwmModules"	Title
-+			"Identify"	Module	FvwmIdent
-+			"Talk"  	Module	FvwmTalk
-+			""		Nop
-+			"Button-Bar"	Module	FvwmButtons
+#AddToMenu Module-Popup	"FvwmModules"	Title
+#+			"Identify"	Module	FvwmIdent
+#+			"Talk"  	Module	FvwmTalk
+#+			""		Nop
+#+			"Button-Bar"	Module	FvwmButtons
 #+			"Pager"		Module  FvwmPager * 
-+			"Pager (2 desks)" Module  FvwmPager 0 5
-+			"WinList"	Module  FvwmWinList
-+			""		Nop
-+			"Banner"	Module	FvwmBanner
-+                       "ScrollBar"     Module  FvwmScroll 50 50
-+			"Background"	Module  FvwmBacker
-+                       "AutoRaise"     Module  FvwmAuto 200 Raise Nop
-+                       "Stop AutoRaise" KillModule FvwmAuto
-+			""		Nop
-+			"IconBox"	Module	FvwmIconBox
-+                       "IconMan"       Module  FvwmIconMan
-+			""		Nop
-+                       "Form - Rlogin"      Module FvwmForm Rlogin
-+                       "Form - MyFvwmTalk"  Module FvwmForm MyFvwmTalk
-+                       "Form - QuitVerify"  Module FvwmForm QuitVerify
+#+			"Pager (2 desks)" Module  FvwmPager 0 5
+#+			"WinList"	Module  FvwmWinList
+#+			""		Nop
+#+			"Banner"	Module	FvwmBanner
+#+                       "ScrollBar"     Module  FvwmScroll 50 50
+#+			"Background"	Module  FvwmBacker
+#+                       "AutoRaise"     Module  FvwmAuto 200 Raise Nop
+#+                       "Stop AutoRaise" KillModule FvwmAuto
+#+			""		Nop
+#+			"IconBox"	Module	FvwmIconBox
+#+                       "IconMan"       Module  FvwmIconMan
+#+			""		Nop
+#+                       "Form - Rlogin"      Module FvwmForm Rlogin
+#+                       "Form - MyFvwmTalk"  Module FvwmForm MyFvwmTalk
+#+                       "Form - QuitVerify"  Module FvwmForm QuitVerify
 
-AddToMenu Quit-Verify
-+		      	"Restart Fvwm%mini.refresh.xpm%"	    Restart fvwm
-+		      	""		    Nop
-+	      	      	"Start cwm"         Restart cwm
-+	      	      	"Start wm2"         Restart wm2
-+		      	"Start twm"         Restart twm
-+		      	"Start ctwm"        Restart ctwm
-+			"Start flwm"	    Restart flwm
-+		      	"Start mwm"    	    Restart mwm
-+			"Start openbox"	    Restart openbox
-+		        "Start tvtwm"       Restart tvtwm
-+		      	""		    Nop
-+		      	"Start dummy%mini.xterm.xpm%"       Restart xterm
-+		      	""		    Nop
-+		      	"No, Don't Quit"    Nop
+#AddToMenu Quit-Verify
+#+		      	"Restart Fvwm%mini.refresh.xpm%"	    Restart fvwm
+#+		      	""		    Nop
+#+	      	      	"Start cwm"         Restart cwm
+#+	      	      	"Start wm2"         Restart wm2
+#+		      	"Start twm"         Restart twm
+#+		      	"Start ctwm"        Restart ctwm
+#+			"Start flwm"	    Restart flwm
+#+		      	"Start mwm"    	    Restart mwm
+#+			"Start openbox"	    Restart openbox
+#+		        "Start tvtwm"       Restart tvtwm
+#+		      	""		    Nop
+#+		      	"Start dummy%mini.xterm.xpm%"       Restart xterm
+#+		      	""		    Nop
+##+		      	"No, Don't Quit"    Nop
 
 ######################## Sample Functions ##########################
 
@@ -530,8 +581,8 @@ Key Up		A	SM	CursorMove +0   -10
 Key Down	A	SM	CursorMove +0   +10
 
 # Keyboard accelerators
-Key F1		A	M	Menu RootMenu
-Key F2		A	M	Menu Window-Ops
+#Key F1		A	M	Menu RootMenu
+#Key F2		A	M	Menu Window-Ops
 Key F3		A	M	WindowList FvwmWinList
 Key F4		A	M	Iconify
 Key F5		A	M	Move
@@ -765,5 +816,4 @@ Colorset 2 fg #ffffff, bg #000000, sh #000000, hi #000000
 *fvwmPagerSmallFont 5x8
 *fvwmPagerBalloons Pager
 *fvwmPagerBalloonfore white
-
 
