@@ -1,10 +1,15 @@
-xterm*faceName: Hack-9
-xterm*font:	Hack-9
-xterm*boldFont:	Hack-9
+xterm*faceName: DejaVu Sans Mono for Powerline-9
+xterm*font:     DejaVu Sans Mono for Powerline-9
+xterm*boldFont: DejaVu Sans Mono for Powerline-9
 
+URxvt*font: xft:MesloLGS NF:size=9
+URxvt*letterSpace: -1
 xterm*title: terminal
-xterm*internalBorder: 80
-xterm*ScrollBar: off
+URxvt*title: terminal
+xterm*internalBorder: 81
+URxvt*internalBorder: 90
+xterm*ScrollBar: false
+URxvt*scrollBar: false
 
 *.foreground:   #f0e9dc
 *.background:   #3e3e3e
@@ -26,3 +31,5 @@ xterm*ScrollBar: off
 *.color7:       #d0d0d0
 *.color15:      #f6f6f6
 
+~                                                                                       
+~                      
